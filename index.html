@@ -13,7 +13,7 @@
     }
 
     #openLogButton {
-      position: absolute;
+      position: fixed;
       right: 10px;
       top: 10px;
       background-color: #ddd;
@@ -23,6 +23,7 @@
       -webkit-border-radius: 10px;
       border-radius: 10px;
       border: 1px solid #ccc;
+      z-index: 9999;
     }
 
     #openLogButton.done {
@@ -32,7 +33,7 @@
     }
 
     #logContainer {
-      position: absolute;
+      position: fixed;
       bottom: 10px;
       left: 10px;
       background-color: #f1f1f1;
@@ -42,6 +43,7 @@
       word-break: break-all;
       width: 80%;
       height: auto;
+      z-index: 9999;
     }
   </style>
 </head>
