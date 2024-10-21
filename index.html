@@ -66,26 +66,26 @@
   <title>QuaggaJS Barcode Detector</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
   <style>
-  #interactive {
-    width: 300px; /* Desired width */
-    height: 300px; /* Desired height */
+  /*#interactive {
+    width: 300px;
+    height: 300px;
     overflow: hidden;
     position: relative;
     margin:0 auto;
   }
 
   #interactive video {
-    width: 100%; /* Make video fill the container */
-    height: auto; /* Maintain aspect ratio */
+    width: 100%; 
+    height: auto;
   }
 
   #interactive canvas {
-    position: absolute; /* Overlay the canvas on the video */
+    position: absolute; 
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-  }
+  }*/
 </style>
 </head>
 <body>
@@ -99,11 +99,11 @@
         name: "Live",
         type: "LiveStream",
         target: document.querySelector('#interactive'), // The video element,
-        constraints: {
+        /*constraints: {
             facingMode: "environment", // Use back camera on mobile
             width: { ideal: 300 }, // Set ideal width
             height: { ideal: 300 } // Set ideal height
-        },
+        },*/
       },
       decoder: {
         readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"], // Types of barcodes to detect
