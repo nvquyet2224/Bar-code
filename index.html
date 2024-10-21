@@ -47,7 +47,7 @@
 </head>
 
 <body>
-  <video id="stream" style="width: 100vw; height: 100vh;"></video>
+  <video id="stream" style="width: 100vw; height: 100vh;" autoplay></video>
   <button id="openLogButton">Log</button>
   <div id="logContainer" style="display:none;"></div>
 
@@ -81,26 +81,34 @@
       }
     });
 
-    (async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: {
-            ideal: "environment"
-          }
-        },
-        audio: false
-      });
-      const videoEl = document.querySelector("#stream");
-      videoEl.srcObject = stream;
-      videoEl.play();
 
-      const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
-      window.setInterval(async () => {
-        const barcodes = await barcodeDetector.detect(videoEl);
-        if (barcodes.length <= 0) return;
-        alert(barcodes.map(barcode => barcode.rawValue));
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function (stream) {
+        document.getElementById('stream').srcObject = stream;
+      }).catch(function (err) {
+        console.log('Error:', err);
+      });
+
+
+    /*(async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+    video: {
+    facingMode: {
+    ideal: "environment"
+    }
+    },
+    audio: false
+    });
+    const videoEl = document.querySelector("#stream");
+    videoEl.srcObject = stream;
+    videoEl.play();
+  
+    const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+    window.setInterval(async () => {
+    const barcodes = await barcodeDetector.detect(videoEl);
+    if (barcodes.length <= 0) return; alert(barcodes.map(barcode=> barcode.rawValue));
       }, 1000)
-    })();
+      })();*/
 
   </script>
 </body>
