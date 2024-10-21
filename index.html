@@ -47,7 +47,7 @@
 </head>
 
 <body>
-  <video id="stream" style="width: 100vw; height: 100vh;" autoplay></video>
+  <video id="stream" style="width: 100vw; height: 100vh;" muted autoplay></video>
   <button id="openLogButton">Log</button>
   <div id="logContainer" style="display:none;"></div>
 
@@ -82,7 +82,14 @@
     });
 
 
-    navigator.mediaDevices.getUserMedia({ video: true })
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: {
+          ideal: "environment"
+        }
+      },
+      audio: false
+    })
       .then(function (stream) {
         document.getElementById('stream').srcObject = stream;
       }).catch(function (err) {
