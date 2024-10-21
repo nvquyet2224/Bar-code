@@ -81,35 +81,26 @@
       }
     });
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { ideal: 'environment' }
-      },
-      audio: false
-    });
-    const videoEl = document.querySelector('#stream');
-    videoEl.srcObject = stream;
-    await videoEl.play();
+    (async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: {
+            ideal: "environment"
+          }
+        },
+        audio: false
+      });
+      const videoEl = document.querySelector("#stream");
+      videoEl.srcObject = stream;
+      await videoEl.play();
 
-    const barcodeDetector = new BarcodeDetector({
-      formats: ["qr_code"],
-    });
-
-    // const imageFile = await fetch(
-    //   "demo6.png",
-    // ).then((resp) => resp.blob());
-
-    // barcodeDetector.detect(videoEl).then((result) => {
-    //   console.log(result[0]?.rawValue || 'noData');
-    // });
-
-    window.setInterval(async () => {
-      const barcodes = await barcodeDetector.detect(videoEl);
-      if (barcodes.length <= 0) return;
-      document.getElementById('openLogButton').classList.add('done');
-      console.log(barcodes.map(barcode => barcode.rawValue));
-      //alert(barcodes.map(barcode => barcode.rawValue));
-    }, 1000)
+      const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+      window.setInterval(async () => {
+        const barcodes = await barcodeDetector.detect(videoEl);
+        if (barcodes.length <= 0) return;
+        alert(barcodes.map(barcode => barcode.rawValue));
+      }, 1000)
+    })();
 
   </script>
 </body>
