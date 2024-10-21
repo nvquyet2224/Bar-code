@@ -202,12 +202,19 @@
 
       const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
 
-      window.setInterval(async () => {
-        const barcodes = await barcodeDetector.detect(videoEl);
-        if (barcodes.length <= 0) return;
-        console.log(barcode => barcode[0]?.rawValue);
-        document.getElementById('openLogButton').classList.add('done');
+      window.setInterval(() => {
+        //const barcodes = await barcodeDetector.detect(videoEl);
+        //if (barcodes.length <= 0) return;
+        //console.log(barcode => barcode[0]?.rawValue);
+        //document.getElementById('openLogButton').classList.add('done');
         //alert(barcodes.map(barcode => barcode.rawValue));
+        barcodeDetector.detect(videoEl).then((result) => {
+          if(!result || result.length === 0 ) {
+            return;
+          }
+          console.log(result[0]?.rawValue || 'Dummy');
+          document.getElementById('openLogButton').classList.add('done');
+        });
       }, 1000);
 
     }).catch(function (err) {
