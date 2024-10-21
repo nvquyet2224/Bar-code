@@ -92,7 +92,7 @@
       });
       const videoEl = document.querySelector("#stream");
       videoEl.srcObject = stream;
-      await videoEl.play();
+      videoEl.play();
 
       const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
       window.setInterval(async () => {
