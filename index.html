@@ -89,12 +89,23 @@
         }
       },
       audio: false
-    })
-      .then(function (stream) {
-        document.getElementById('stream').srcObject = stream;
-      }).catch(function (err) {
-        console.log('Error:', err);
-      });
+    }).then(function (stream) {
+      //document.getElementById('stream').srcObject = stream;
+      const videoEl = document.querySelector("#stream");
+      videoEl.srcObject = stream;
+      videoEl.play();
+
+      const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+
+      window.setInterval(async () => {
+        const barcodes = await barcodeDetector.detect(videoEl);
+        if (barcodes.length <= 0) return;
+        alert(barcodes.map(barcode => barcode.rawValue));
+      }, 1000);
+
+    }).catch(function (err) {
+      console.log('Error:', err);
+    });
 
 
     /*(async () => {
@@ -115,7 +126,8 @@
     const barcodes = await barcodeDetector.detect(videoEl);
     if (barcodes.length <= 0) return; alert(barcodes.map(barcode=> barcode.rawValue));
       }, 1000)
-      })();*/
+      })();
+      */
 
   </script>
 </body>
