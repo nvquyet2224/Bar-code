@@ -119,7 +119,7 @@
 
     Quagga.onDetected(function(result) {
       var code = result.codeResult.code;
-      document.getElementById('barcode-result').innerText = `Barcode Detected: ${JSON.stringify(result)}`;
+      document.getElementById('barcode-result').innerText = `Barcode Detected: ${code}`;
       console.log('Detected:', code);
     });
   </script>
