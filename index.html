@@ -1,3 +1,106 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Console Log Viewer</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #openLogButton {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background-color: #ddd;
+      padding: 10px;
+      box-sizing: border-box;
+      font-size: 16px;
+      -webkit-border-radius: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    #logContainer {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background-color: #f1f1f1;
+      box-sizing: border-box;
+      padding: 20px;
+      border-radius: 20px;
+      word-break: break-all;
+      width: 80%;
+      height: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <video id="stream" style="width: 100vw; height: 100vh;"></video>
+  <button id="openLogButton">Log</button>
+  <div id="logContainer" style="display:none;"></div>
+
+
+  <script type="module" src="https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/side-effects.min.js"></script>
+
+  <script type="module">
+    import { BarcodeDetector } from "https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/pure.min.js";
+
+    let logData = [];
+
+    (function () {
+      const oldLog = console.log;
+      console.log = function (...args) {
+        logData.push(args.join(' ')); // Lưu các log
+        oldLog.apply(console, args);  // Giữ nguyên chức năng của console.log
+      };
+    })();
+
+    // Xử lý khi người dùng nhấn nút "Open Console Log"
+    document.getElementById('openLogButton').addEventListener('click', function () {
+      const logContainer = document.getElementById('logContainer');
+      logContainer.innerHTML = logData.join('<br>');
+      if (logContainer.style.display === 'block') {
+        logContainer.style.display = 'none';
+      } else {
+        logContainer.style.display = 'block';
+      }
+    });
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: 'environment' }
+      },
+      audio: false
+    });
+    const videoEl = document.querySelector('#stream');
+    videoEl.srcObject = stream;
+    await videoEl.play();
+
+    const barcodeDetector = new BarcodeDetector({
+      formats: ["qr_code"],
+    });
+
+    const imageFile = await fetch(
+      "demo6.png",
+    ).then((resp) => resp.blob());
+
+    barcodeDetector.detect(videoEl).then((result) => {
+      console.log(result[0]?.rawValue || 'noData');
+    });
+
+  </script>
+</body>
+
+</html> -->
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -102,8 +205,7 @@
       window.setInterval(async () => {
         const barcodes = await barcodeDetector.detect(videoEl);
         if (barcodes.length <= 0) return;
-        console.log('barcode');
-        console.log(barcode => barcode.rawValue);
+        console.log(barcode => barcode[0]?.rawValue);
         document.getElementById('openLogButton').classList.add('done');
         //alert(barcodes.map(barcode => barcode.rawValue));
       }, 1000);
@@ -112,27 +214,6 @@
       console.log('Error:', err);
     });
 
-
-    /*(async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({
-    video: {
-    facingMode: {
-    ideal: "environment"
-    }
-    },
-    audio: false
-    });
-    const videoEl = document.querySelector("#stream");
-    videoEl.srcObject = stream;
-    videoEl.play();
-  
-    const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
-    window.setInterval(async () => {
-    const barcodes = await barcodeDetector.detect(videoEl);
-    if (barcodes.length <= 0) return; alert(barcodes.map(barcode=> barcode.rawValue));
-      }, 1000)
-      })();
-      */
 
   </script>
 </body>
