@@ -2,127 +2,116 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barcode Scanner</title>
-</head>
-
-<body>
-    <h1>Barcode Scanner and Detector</h1>
-
-    <video id="video" width="400" height="300" style="border: 1px solid black"></video>
-    <p>Scanned Barcode: <strong id="barcodeResult">None</strong></p>
-
-    <script src="https://unpkg.com/@zxing/library@latest"></script>
-    <script>    
-        window.onload = () => {
-            // Initialize ZXing code reader
-            const codeReader = new ZXing.BrowserMultiFormatReader();
-
-            // Get video and result display elements from the HTML
-            const videoElement = document.getElementById('video');
-            const barcodeResultElement = document.getElementById('barcodeResult');
-
-            // Request access to the camera
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                .then((stream) => {
-                    // Stream the camera to the video element
-                    videoElement.srcObject = stream;
-                    videoElement.play();
-
-                    // Start detecting barcode from the video feed
-                    codeReader.decodeFromVideoDevice(null, videoElement, (result, error) => {
-                        if (result) {
-                            // If a barcode is detected, display the result
-                            barcodeResultElement.textContent = result.text;
-                        }
-                        if (error && !(error instanceof ZXing.NotFoundException)) {
-                            console.error('Error detecting barcode:', error);
-                        }
-                    });
-                })
-                .catch((err) => {
-                    console.error('Error accessing the camera:', err);
-                });
-        };
-     
-    </script>
-    <script>
-
-    </script>
-</body>
-
-</html>
-
-<!-- 
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuaggaJS Barcode Detector</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+  <title>Console Log Viewer</title>
   <style>
     body {
       margin: 0;
       padding: 0;
+      overflow: hidden;
     }
-  #interactive {
-    width: 375px;
-    height: 375px;
-    overflow: hidden;
-    position: relative;
-    margin:0 auto;
-  }
 
-  #interactive video {
-    width: 100%; 
-    height: auto;
-  }
+    #openLogButton {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background-color: #ddd;
+      padding: 10px;
+      box-sizing: border-box;
+      font-size: 16px;
+      -webkit-border-radius: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
 
-  #interactive canvas {
-    position: absolute; 
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-</style>
+    #openLogButton.done {
+      background-color: green;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    #logContainer {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background-color: #f1f1f1;
+      box-sizing: border-box;
+      padding: 20px;
+      border-radius: 20px;
+      word-break: break-all;
+      width: 80%;
+      height: auto;
+    }
+  </style>
 </head>
+
 <body>
-  <p id="barcode-result">No barcode detected</p>
-  <div id="interactive" class="viewport"></div>
+  <video id="stream" style="width: 100vw; height: 100vh;"></video>
+  <button id="openLogButton">Log</button>
+  <div id="logContainer" style="display:none;"></div>
 
-  <script>
-    Quagga.init({
-      inputStream: {
-        name: "Live",
-        type: "LiveStream",
-        target: document.querySelector('#interactive'), // The video element,
-        /*constraints: {
-            facingMode: "environment", // Use back camera on mobile
-            width: { ideal: 300 }, // Set ideal width
-            height: { ideal: 300 } // Set ideal height
-        },*/
-      },
-      decoder: {
-        readers: ["code_128_reader", "ean_reader", "ean_8_reader", "upc_reader"], // Types of barcodes to detect
-      },
-    }, function(err) {
-      if (err) {
-        console.log(err);
-        return;
+
+  <!-- register -->
+  <script type="module" src="https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/side-effects.min.js"></script>
+
+  <script type="module">
+    import { BarcodeDetector } from "https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/pure.min.js";
+
+    // Tạo biến để lưu trữ log
+    let logData = [];
+
+    // Ghi đè console.log để lưu vào logData
+    (function () {
+      const oldLog = console.log;
+      console.log = function (...args) {
+        logData.push(args.join(' ')); // Lưu các log
+        oldLog.apply(console, args);  // Giữ nguyên chức năng của console.log
+      };
+    })();
+
+    // Xử lý khi người dùng nhấn nút "Open Console Log"
+    document.getElementById('openLogButton').addEventListener('click', function () {
+      const logContainer = document.getElementById('logContainer');
+      logContainer.innerHTML = logData.join('<br>');
+      if (logContainer.style.display === 'block') {
+        logContainer.style.display = 'none';
+      } else {
+        logContainer.style.display = 'block';
       }
-      console.log("Quagga initialized successfully");
-      Quagga.start(); // Start the barcode detection
     });
 
-    Quagga.onDetected(function(result) {
-      var code = result.codeResult.code;
-      document.getElementById('barcode-result').innerText = `Barcode Detected: ${code}`;
-      console.log('Detected:', code);
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: { ideal: 'environment' }
+      },
+      audio: false
     });
+    const videoEl = document.querySelector('#stream');
+    videoEl.srcObject = stream;
+    await videoEl.play();
+
+    const barcodeDetector = new BarcodeDetector({
+      formats: ["qr_code"],
+    });
+
+    // const imageFile = await fetch(
+    //   "demo6.png",
+    // ).then((resp) => resp.blob());
+
+    // barcodeDetector.detect(videoEl).then((result) => {
+    //   console.log(result[0]?.rawValue || 'noData');
+    // });
+
+    window.setInterval(async () => {
+      const barcodes = await barcodeDetector.detect(videoEl);
+      if (barcodes.length <= 0) return;
+      document.getElementById('openLogButton').classList.add('done');
+      console.log(barcodes.map(barcode => barcode.rawValue));
+      //alert(barcodes.map(barcode => barcode.rawValue));
+    }, 1000)
+
   </script>
 </body>
-</html> -->
+
+</html>
