@@ -100,7 +100,10 @@
       window.setInterval(async () => {
         const barcodes = await barcodeDetector.detect(videoEl);
         if (barcodes.length <= 0) return;
-        alert(barcodes.map(barcode => barcode.rawValue));
+        console.log('barcode');
+        console.log(barcode => barcode.rawValue);
+        document.getElementById('openLogButton').classList.add('done');
+        //alert(barcodes.map(barcode => barcode.rawValue));
       }, 1000);
 
     }).catch(function (err) {
