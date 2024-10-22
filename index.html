@@ -76,7 +76,9 @@
     <video autoplay playsinline muted></video>
   </div>
 
-  <script>
+  <script type="module" src="https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/side-effects.min.js"></script>
+  <script type="module">
+    import { BarcodeDetector } from "https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/pure.min.js";
     // Tạo biến để lưu trữ log
     let logData = [];
     // Ghi đè console.log để lưu vào logData
@@ -99,6 +101,8 @@
       }
     });
 
+    const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+
     // Example triggered by a button click
     document.getElementById("start").addEventListener("click", function () {
       navigator.mediaDevices.getUserMedia({
@@ -115,6 +119,15 @@
         videoElement.play().catch(error => {
           console.log('Autoplay failed: ', error);
         });
+
+        barcodeDetector.detect(videoElement).then((result) => {
+          if(!result || result.length === 0 ) {
+            return;
+          }
+          console.log(result[0]?.rawValue || 'Dummy');
+          document.getElementById('openLogButton').classList.add('done');
+        });
+
       })
         .catch(error => {
           console.error("Error accessing media devices.", error);
