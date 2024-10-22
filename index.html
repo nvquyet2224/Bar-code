@@ -1,107 +1,50 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Console Log Viewer</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    #openLogButton {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      background-color: #ddd;
-      padding: 10px;
-      box-sizing: border-box;
-      font-size: 16px;
-      -webkit-border-radius: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-    }
-
-    #logContainer {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      background-color: #f1f1f1;
-      box-sizing: border-box;
-      padding: 20px;
-      border-radius: 20px;
-      word-break: break-all;
-      width: 80%;
-      height: auto;
-    }
-  </style>
 </head>
 
 <body>
-  <video id="stream" style="width: 100vw; height: 100vh;"></video>
-  <button id="openLogButton">Log</button>
-  <div id="logContainer" style="display:none;"></div>
+
+  <div class="scanner">
+    <button id="start">Start Camera</button>
+    <video autoplay playsinline muted></video>
+  </div>
 
 
-  <script type="module" src="https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/side-effects.min.js"></script>
-
-  <script type="module">
-    import { BarcodeDetector } from "https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/pure.min.js";
-
-    let logData = [];
-
-    (function () {
-      const oldLog = console.log;
-      console.log = function (...args) {
-        logData.push(args.join(' ')); // Lưu các log
-        oldLog.apply(console, args);  // Giữ nguyên chức năng của console.log
-      };
-    })();
-
-    // Xử lý khi người dùng nhấn nút "Open Console Log"
-    document.getElementById('openLogButton').addEventListener('click', function () {
-      const logContainer = document.getElementById('logContainer');
-      logContainer.innerHTML = logData.join('<br>');
-      if (logContainer.style.display === 'block') {
-        logContainer.style.display = 'none';
-      } else {
-        logContainer.style.display = 'block';
-      }
+  <script>
+    // Example triggered by a button click
+    document.getElementById("start").addEventListener("click", function () {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(stream => {
+          const videoElement = document.querySelector('video');
+          videoElement.srcObject = stream;
+          videoElement.play();
+        })
+        .catch(error => {
+          console.error("Error accessing media devices.", error);
+        });
     });
 
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: { ideal: 'environment' }
-      },
-      audio: false
-    });
-    const videoEl = document.querySelector('#stream');
-    videoEl.srcObject = stream;
-    await videoEl.play();
+    const videoElement = document.querySelector('video');
+    videoElement.srcObject = stream;
 
-    const barcodeDetector = new BarcodeDetector({
-      formats: ["qr_code"],
-    });
-
-    const imageFile = await fetch(
-      "demo6.png",
-    ).then((resp) => resp.blob());
-
-    barcodeDetector.detect(videoEl).then((result) => {
-      console.log(result[0]?.rawValue || 'noData');
+    videoElement.play().catch(error => {
+      console.log('Autoplay failed: ', error);
+      alert('autoplay error');
     });
 
   </script>
+
 </body>
 
-</html> -->
+</html>
 
 
-
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -156,8 +99,6 @@
   <button id="openLogButton">Log</button>
   <div id="logContainer" style="display:none;"></div>
 
-
-  <!-- register -->
   <script type="module" src="https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/side-effects.min.js"></script>
 
   <script type="module">
@@ -226,4 +167,4 @@
   </script>
 </body>
 
-</html>
+</html> -->
