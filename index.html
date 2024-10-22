@@ -107,7 +107,7 @@
           facingMode: "environment",
           width: { min: 1024, ideal: 4096, max: 4096 },
           height: { min: 540, ideal: 2160, max: 2160 },
-          frameRate: { ideal: 10, max: 15 },
+          frameRate: { ideal: 60, max: 65 },
         },
         audio: false
       }).then(stream => {
@@ -120,6 +120,7 @@
 
         window.setInterval(() => {
           barcodeDetector.detect(videoElement).then((result) => {
+            console.log(result);
             if(!result || result.length === 0 || result[0]?.rawValue === "") {
               return;
             }
