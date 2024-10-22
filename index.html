@@ -55,7 +55,7 @@
       position: fixed;
       bottom: 10px;
       left: 10px;
-      background-color: #f1f1f1;
+      background-color: #ddd;
       box-sizing: border-box;
       padding: 20px;
       border-radius: 20px;
@@ -77,6 +77,28 @@
   </div>
 
   <script>
+    // Tạo biến để lưu trữ log
+    let logData = [];
+    // Ghi đè console.log để lưu vào logData
+    (function () {
+      const oldLog = console.log;
+      console.log = function (...args) {
+        logData.push(args.join(' ')); // Lưu các log
+        oldLog.apply(console, args);  // Giữ nguyên chức năng của console.log
+      };
+    })();
+
+     // Xử lý khi người dùng nhấn nút "Open Console Log"
+     document.getElementById('openLogButton').addEventListener('click', function () {
+      const logContainer = document.getElementById('logContainer');
+      logContainer.innerHTML = logData.join('<br>');
+      if (logContainer.style.display === 'block') {
+        logContainer.style.display = 'none';
+      } else {
+        logContainer.style.display = 'block';
+      }
+    });
+
     // Example triggered by a button click
     document.getElementById("start").addEventListener("click", function () {
       navigator.mediaDevices.getUserMedia({
@@ -92,13 +114,13 @@
         videoElement.srcObject = stream;
         videoElement.play().catch(error => {
           console.log('Autoplay failed: ', error);
-          alert('autoplay error');
         });
       })
         .catch(error => {
           console.error("Error accessing media devices.", error);
         });
     });
+
 
   </script>
 
