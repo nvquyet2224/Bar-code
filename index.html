@@ -14,12 +14,18 @@
     <video autoplay playsinline muted></video>
   </div>
 
-
   <script>
     // Example triggered by a button click
     document.getElementById("start").addEventListener("click", function () {
-      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-        .then(stream => {
+      navigator.mediaDevices.getUserMedia({ 
+        video: {
+          facingMode: "environment",
+          width: { min: 1024, ideal: 4096, max: 4096 },
+          height: { min: 540, ideal: 2160, max: 2160 },
+          frameRate: { ideal: 10, max: 15 },
+        }, 
+        audio: false 
+      }).then(stream => {
           const videoElement = document.querySelector('video');
           videoElement.srcObject = stream;
           videoElement.play();
