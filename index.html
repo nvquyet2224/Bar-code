@@ -7,31 +7,44 @@
   <title>Console Log Viewer</title>
 
   <style>
-    body{
-      padding:0;
-      margin:0;
+    body {
+      padding: 0;
+      margin: 0;
       overflow: hidden;
     }
+
     .scanner {
       position: fixed;
       width: 100%;
       height: 100%;
       overflow: hidden;
     }
+
     video {
       width: 100vw;
       height: 100vh;
     }
+
     #start {
       position: absolute;
-      left: 0;
-      top:0;
+      left: 10px;
+      top: 10px;
       z-index: 999;
     }
+
+    #input {
+      position: absolute;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);
+      top: 10px;
+      z-index: 999;
+    }
+
     #openLogButton {
       position: fixed;
       right: 10px;
-      top: 10px;
+      bottom: 10px;
       background-color: #ddd;
       padding: 10px;
       box-sizing: border-box;
@@ -67,7 +80,8 @@
 <body>
 
   <div class="scanner">
-    <button id="start">Start Camera</button>
+    <button id="start">From Camera</button>
+    <button id="input">From images</button>
     <button id="openLogButton">Log</button>
     <div id="logContainer" style="display:none;"></div>
     <video autoplay playsinline muted></video>
@@ -76,140 +90,10 @@
   <script type="module" src="https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/side-effects.min.js"></script>
   <script type="module">
     import { BarcodeDetector } from "https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/pure.min.js";
+    let imageEl = 'demo8.jpg';
+    let fromImg = false;
     // Tạo biến để lưu trữ log
     let logData = [];
-    // Ghi đè console.log để lưu vào logData
-    (function () {
-      const oldLog = console.log;
-      console.log = function (...args) {
-        logData.push(args.join(' ')); // Lưu các log
-        oldLog.apply(console, args);  // Giữ nguyên chức năng của console.log
-      };
-    })();
-
-     // Xử lý khi người dùng nhấn nút "Open Console Log"
-     document.getElementById('openLogButton').addEventListener('click', function () {
-      const logContainer = document.getElementById('logContainer');
-      logContainer.innerHTML = logData.join('<br>');
-      if (logContainer.style.display === 'block') {
-        logContainer.style.display = 'none';
-      } else {
-        logContainer.style.display = 'block';
-      }
-    });
-
-    
-
-    // width: { min: 1024, ideal: 4096, max: 4096 },
-    // height: { min: 540, ideal: 2160, max: 2160 },
-    // frameRate: { ideal: 60, max: 65 },
-    
-    // Example triggered by a button click
-    document.getElementById("start").addEventListener("click", function () {
-      navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: "environment",
-          width: { min: 640, ideal: 1280, max: 1920 },
-          height: { min: 480, ideal: 720, max: 1080 },
-          frameRate: { min: 10, ideal: 15, max: 30 },
-        },
-        audio: false
-      }).then(stream => {
-        const videoElement = document.querySelector('video');
-        videoElement.srcObject = stream;
-        videoElement.play();
-
-        const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
-        console.log('Vao day');
-
-        window.setInterval(() => {
-          barcodeDetector.detect(videoElement).then((result) => {
-            console.log(result);
-            if(!result || result.length === 0 || result[0]?.rawValue === "") {
-              return;
-            }
-            console.log(result);
-            console.log(result[0]?.rawValue);
-            document.getElementById('openLogButton').classList.add('done');
-          });
-        }, 1000); 
-      })
-        .catch(error => {
-          console.error("Error accessing media devices.", error);
-        });
-    });
-
-
-  </script>
-
-</body>
-
-</html>
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Console Log Viewer</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    #openLogButton {
-      position: fixed;
-      right: 10px;
-      top: 10px;
-      background-color: #ddd;
-      padding: 10px;
-      box-sizing: border-box;
-      font-size: 16px;
-      -webkit-border-radius: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      z-index: 9999;
-    }
-
-    #openLogButton.done {
-      background-color: green;
-      color: #fff;
-      font-weight: bold;
-    }
-
-    #logContainer {
-      position: fixed;
-      bottom: 10px;
-      left: 10px;
-      background-color: #f1f1f1;
-      box-sizing: border-box;
-      padding: 20px;
-      border-radius: 20px;
-      word-break: break-all;
-      width: 80%;
-      height: auto;
-      z-index: 9999;
-    }
-  </style>
-</head>
-
-<body>
-  <video id="stream" style="width: 100vw; height: 100vh;" playsinline muted autoplay></video>
-  <button id="openLogButton">Log</button>
-  <div id="logContainer" style="display:none;"></div>
-
-  <script type="module" src="https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/side-effects.min.js"></script>
-
-  <script type="module">
-    import { BarcodeDetector } from "https://fastly.jsdelivr.net/npm/barcode-detector@2/dist/es/pure.min.js";
-
-    // Tạo biến để lưu trữ log
-    let logData = [];
-
     // Ghi đè console.log để lưu vào logData
     (function () {
       const oldLog = console.log;
@@ -231,43 +115,72 @@
     });
 
 
-    navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: "environment",
-        width: { min: 1024, ideal: 4096, max: 4096 },
-        height: { min: 540, ideal: 2160, max: 2160 },
-        frameRate: { ideal: 10, max: 15 },
-      },
-      audio: false
-    }).then(function (stream) {
-      //document.getElementById('stream').srcObject = stream;
-      const videoEl = document.querySelector("#stream");
-      videoEl.srcObject = stream;
-      videoEl.play();
+    // width: { min: 1024, ideal: 4096, max: 4096 },
+    // height: { min: 540, ideal: 2160, max: 2160 },
+    // frameRate: { ideal: 60, max: 65 },
 
+    document.getElementById("input").addEventListener("click", function () {
+      fromImg = true;
       const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
 
-      window.setInterval(() => {
-        //const barcodes = await barcodeDetector.detect(videoEl);
-        //if (barcodes.length <= 0) return;
-        //console.log(barcode => barcode[0]?.rawValue);
-        //document.getElementById('openLogButton').classList.add('done');
-        //alert(barcodes.map(barcode => barcode.rawValue));
-        barcodeDetector.detect(videoEl).then((result) => {
-          if(!result || result.length === 0 ) {
-            return;
-          }
-          console.log(result[0]?.rawValue || 'Dummy');
-          document.getElementById('openLogButton').classList.add('done');
-        });
-      }, 1000);
+      async function fetchBlob(url) {
+        const imageFile = await fetch(
+          url,
+        ).then((resp) => resp.blob());
 
-    }).catch(function (err) {
-      console.log('Error:', err);
+        barcodeDetector
+        .detect(imageFile)
+        .then((result) => {
+          console.log(result);
+          console.log(result[0]?.rawValue);
+          document.getElementById('openLogButton').classList.add('done');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      }
+      fetchBlob(imageEl);
+    });
+
+    // Example triggered by a button click
+    document.getElementById("start").addEventListener("click", function () {
+      navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment",
+          width: { min: 640, ideal: 1280, max: 1920 },
+          height: { min: 480, ideal: 720, max: 1080 },
+          frameRate: { min: 10, ideal: 15, max: 30 },
+        },
+        audio: false
+      }).then(stream => {
+        const videoElement = document.querySelector('video');
+        videoElement.srcObject = stream;
+        videoElement.play();
+
+        if (!fromImg) {
+          const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
+          window.setInterval(() => {
+            barcodeDetector.detect(videoElement).then((result) => {
+              console.log(result);
+              if (!result || result.length === 0 || result[0]?.rawValue === "") {
+                return;
+              }
+              console.log(result[0]?.rawValue);
+              document.getElementById('openLogButton').classList.add('done');
+            });
+          }, 1000);
+        }
+
+      }).catch(error => {
+        console.error("Error accessing media devices.", error);
+      });
+
     });
 
 
   </script>
+
 </body>
 
-</html> -->
+</html>
