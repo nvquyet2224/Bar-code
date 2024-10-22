@@ -114,7 +114,7 @@
         const videoElement = document.querySelector('video');
         videoElement.srcObject = stream;
         videoElement.play();
-        
+
         const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
         console.log('Vao day');
 
@@ -128,9 +128,10 @@
             if(!result || result.length === 0 ) {
               return;
             }
+            console.log(result);
             console.log(result[0]?.rawValue || 'Dummy');
             document.getElementById('openLogButton').classList.add('done');
-            consoile.log('clear time out');
+            console.log('clear time out');
           });
         }, 1000);
         
