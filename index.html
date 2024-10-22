@@ -27,9 +27,42 @@
     }
     #start {
       position: absolute;
-      right: 0;
+      left: 0;
       top:0;
       z-index: 999;
+    }
+    #openLogButton {
+      position: fixed;
+      right: 10px;
+      top: 10px;
+      background-color: #ddd;
+      padding: 10px;
+      box-sizing: border-box;
+      font-size: 16px;
+      -webkit-border-radius: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      z-index: 9999;
+    }
+
+    #openLogButton.done {
+      background-color: green;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    #logContainer {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      background-color: #f1f1f1;
+      box-sizing: border-box;
+      padding: 20px;
+      border-radius: 20px;
+      word-break: break-all;
+      width: 80%;
+      height: auto;
+      z-index: 9999;
     }
   </style>
 </head>
@@ -38,6 +71,8 @@
 
   <div class="scanner">
     <button id="start">Start Camera</button>
+    <button id="openLogButton">Log</button>
+    <div id="logContainer" style="display:none;"></div>
     <video autoplay playsinline muted></video>
   </div>
 
