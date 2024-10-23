@@ -3,7 +3,15 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 // Access user's webcam
-navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(function (stream) {
+navigator.mediaDevices.getUserMedia({ 
+    video: {
+        facingMode: "environment",
+        width: { min: 640, ideal: 1280, max: 1920 },
+        height: { min: 480, ideal: 720, max: 1080 },
+        frameRate: { min: 10, ideal: 15, max: 30 },
+      },
+      audio: false
+ }).then(function (stream) {
     video.srcObject = stream;
     video.setAttribute('playsinline', true); // iOS compatibility
     requestAnimationFrame(tick); // Call tick function to process frames
